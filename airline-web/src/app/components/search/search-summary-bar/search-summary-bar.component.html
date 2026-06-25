@@ -1,0 +1,46 @@
+<div class="border-b border-slate-200 bg-white shadow-sm">
+  <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 lg:px-6">
+    <button
+      type="button"
+      class="group flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-transparent px-2 py-1 text-left transition hover:border-slate-200 hover:bg-slate-50 sm:gap-x-4"
+      (click)="edit.emit()"
+      aria-label="Edit search"
+    >
+      <div class="flex items-center gap-2">
+        <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-gold/10 text-brand-gold">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </span>
+        <div class="min-w-0">
+          <p class="truncate text-sm font-semibold text-slate-900">
+            {{ request().origin }}
+            <span class="mx-1 font-normal text-slate-400">→</span>
+            {{ request().destination }}
+          </p>
+          <p class="truncate text-xs text-slate-500">
+            {{ request().departureDate | date: 'MMM d, yyyy' }}
+            @if (request().returnDate) {
+              <span> – {{ request().returnDate | date: 'MMM d, yyyy' }}</span>
+            }
+            <span class="mx-1.5 text-slate-300">·</span>
+            {{ travellerSummary(request()) }}
+            <span class="mx-1.5 text-slate-300">·</span>
+            {{ tripTypeLabel(request()) }}
+          </p>
+        </div>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="inline-flex shrink-0 items-center gap-2 rounded-lg border border-brand-gold/30 bg-brand-gold px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-gold-dark"
+      (click)="edit.emit()"
+    >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+      </svg>
+      Edit Search
+    </button>
+  </div>
+</div>

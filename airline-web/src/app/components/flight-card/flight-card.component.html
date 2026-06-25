@@ -1,0 +1,132 @@
+<article class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+  <div class="flex flex-col lg:flex-row">
+    <div class="min-w-0 flex-1 divide-y divide-slate-100">
+      <div class="p-4 sm:p-5">
+        @if (offer().returnSegments.length > 0) {
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Outbound</p>
+        }
+        @let outbound = offer().outboundSegments;
+        <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+          <div class="flex min-w-[120px] items-center gap-2">
+            <app-airline-logo
+              [airline]="primaryAirline(outbound)"
+              [carrierCode]="primarySegment(outbound)?.carrierCode"
+              [flightNumber]="primarySegment(outbound)?.flightNumber"
+            />
+            <span class="text-sm font-medium text-slate-700">{{ primaryAirline(outbound) }}</span>
+          </div>
+          <div class="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-3 sm:gap-4">
+            <div class="min-w-[90px]">
+              <p class="text-sm font-bold text-slate-900">
+                {{ firstSegment(outbound).origin }}
+                {{ firstSegment(outbound).departureTime | date: 'hh:mm a' }}
+              </p>
+              <p class="text-xs text-slate-500">{{ firstSegment(outbound).departureTime | date: 'EEE, MMM d' }}</p>
+            </div>
+            <div class="flex min-w-[100px] flex-1 flex-col items-center px-2">
+              <span class="text-xs font-medium text-brand-gold">{{ formatDuration(totalDuration(outbound)) }}</span>
+              <div class="relative my-1 flex w-full max-w-[140px] items-center">
+                <span class="h-px flex-1 bg-brand-gold/40"></span>
+                <span class="mx-1 h-2 w-2 rounded-full border-2 border-brand-gold bg-white"></span>
+                <span class="h-px flex-1 bg-brand-gold/40"></span>
+              </div>
+              <span class="text-xs font-medium text-brand-gold">{{ stopsLabel(outbound) }}</span>
+            </div>
+            <div class="min-w-[90px] text-right">
+              <p class="text-sm font-bold text-slate-900">
+                {{ lastSegment(outbound).destination }}
+                {{ lastSegment(outbound).arrivalTime | date: 'hh:mm a' }}
+              </p>
+              <p class="text-xs text-slate-500">{{ lastSegment(outbound).arrivalTime | date: 'EEE, MMM d' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (offer().returnSegments.length > 0) {
+        @let returnSegs = offer().returnSegments;
+        <div class="p-4 sm:p-5">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Return</p>
+          <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+            <div class="flex min-w-[120px] items-center gap-2">
+              <app-airline-logo
+                [airline]="primaryAirline(returnSegs)"
+                [carrierCode]="primarySegment(returnSegs)?.carrierCode"
+                [flightNumber]="primarySegment(returnSegs)?.flightNumber"
+              />
+              <span class="text-sm font-medium text-slate-700">{{ primaryAirline(returnSegs) }}</span>
+            </div>
+            <div class="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-3 sm:gap-4">
+              <div class="min-w-[90px]">
+                <p class="text-sm font-bold text-slate-900">
+                  {{ firstSegment(returnSegs).origin }}
+                  {{ firstSegment(returnSegs).departureTime | date: 'hh:mm a' }}
+                </p>
+                <p class="text-xs text-slate-500">{{ firstSegment(returnSegs).departureTime | date: 'EEE, MMM d' }}</p>
+              </div>
+              <div class="flex min-w-[100px] flex-1 flex-col items-center px-2">
+                <span class="text-xs font-medium text-brand-gold">{{ formatDuration(totalDuration(returnSegs)) }}</span>
+                <div class="relative my-1 flex w-full max-w-[140px] items-center">
+                  <span class="h-px flex-1 bg-brand-gold/40"></span>
+                  <span class="mx-1 h-2 w-2 rounded-full border-2 border-brand-gold bg-white"></span>
+                  <span class="h-px flex-1 bg-brand-gold/40"></span>
+                </div>
+                <span class="text-xs font-medium text-brand-gold">{{ stopsLabel(returnSegs) }}</span>
+              </div>
+              <div class="min-w-[90px] text-right">
+                <p class="text-sm font-bold text-slate-900">
+                  {{ lastSegment(returnSegs).destination }}
+                  {{ lastSegment(returnSegs).arrivalTime | date: 'hh:mm a' }}
+                </p>
+                <p class="text-xs text-slate-500">{{ lastSegment(returnSegs).arrivalTime | date: 'EEE, MMM d' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-row items-center justify-between gap-4 border-t border-slate-100 bg-slate-50 p-4 sm:p-5 lg:w-52 lg:flex-col lg:items-stretch lg:justify-center lg:border-l lg:border-t-0 xl:w-56">
+      <div class="text-left lg:text-right">
+        @let parts = priceParts();
+        <p class="text-xl font-bold leading-none text-slate-900 sm:text-2xl">
+          {{ currencyPrefix() }}{{ parts.whole }}<sup class="text-sm font-semibold">.{{ parts.cents }}</sup>
+        </p>
+        <p class="mt-1 text-xs text-slate-500">Price per Person</p>
+        <p class="text-[10px] text-slate-400">(incl. taxes &amp; fees)</p>
+      </div>
+      <button
+        type="button"
+        class="shrink-0 rounded-lg bg-brand-gold px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-gold-dark"
+        (click)="onSelect()"
+      >
+        Select
+      </button>
+    </div>
+  </div>
+
+  <div class="border-t border-dashed border-slate-200 px-4 py-3 sm:px-5">
+    <button
+      type="button"
+      class="inline-flex items-center gap-1.5 text-sm font-medium text-brand-gold hover:text-brand-gold-dark"
+      (click)="toggleDetails()"
+    >
+      Flight Details
+      <svg class="h-4 w-4 transition" [class.rotate-180]="detailsOpen()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+  </div>
+
+  @if (detailsOpen()) {
+    <div class="border-t border-slate-100 bg-slate-50/50 px-4 py-5 sm:px-5">
+      @if (offer().returnSegments.length > 0) {
+        <app-flight-leg-details [segments]="offer().outboundSegments" title="Departure" />
+        <div class="my-5 border-t border-slate-200"></div>
+        <app-flight-leg-details [segments]="offer().returnSegments" title="Return" />
+      } @else {
+        <app-flight-leg-details [segments]="offer().outboundSegments" title="Flight" />
+      }
+    </div>
+  }
+</article>

@@ -1,0 +1,147 @@
+<div class="relative">
+
+  <label class="mb-1 block text-sm font-medium text-slate-700">{{ label() }}</label>
+
+  <button
+
+    type="button"
+
+    class="flex w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-left text-sm shadow-sm transition focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 disabled:cursor-not-allowed disabled:bg-slate-100"
+
+    [disabled]="isDisabled()"
+
+    (click)="toggle()"
+
+  >
+
+    <span [class.text-slate-400]="!selectedDate()">{{ displayValue() || placeholder() }}</span>
+
+    <svg class="h-5 w-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+
+    </svg>
+
+  </button>
+
+
+
+  @if (isOpen()) {
+
+    <div
+
+      class="absolute z-30 mt-2 w-72 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl"
+
+      (mouseleave)="close()"
+
+    >
+
+      <div class="mb-4 flex items-center justify-between">
+
+        <button
+
+          type="button"
+
+          class="rounded-lg p-1.5 text-brand-gold transition hover:bg-amber-50"
+
+          aria-label="Previous month"
+
+          (click)="prevMonth()"
+
+        >
+
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+
+          </svg>
+
+        </button>
+
+        <span class="text-sm font-semibold text-slate-800">{{ monthLabel }}</span>
+
+        <button
+
+          type="button"
+
+          class="rounded-lg p-1.5 text-brand-gold transition hover:bg-amber-50"
+
+          aria-label="Next month"
+
+          (click)="nextMonth()"
+
+        >
+
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+
+          </svg>
+
+        </button>
+
+      </div>
+
+
+
+      <div class="mb-2 grid grid-cols-7 text-center text-xs font-medium text-slate-400">
+
+        @for (day of weekDays; track day) {
+
+          <span class="py-1">{{ day }}</span>
+
+        }
+
+      </div>
+
+
+
+      <div class="grid grid-cols-7 gap-1 text-center text-sm">
+
+        @for (cell of calendarDays; track cell.iso) {
+
+          <button
+
+            type="button"
+
+            class="aspect-square rounded-xl text-sm transition"
+
+            [class.text-slate-300]="!cell.inMonth"
+
+            [class.text-slate-800]="cell.inMonth && !isSelected(cell.iso)"
+
+            [class.bg-brand-gold]="isSelected(cell.iso)"
+
+            [class.text-white]="isSelected(cell.iso)"
+
+            [class.font-semibold]="isSelected(cell.iso)"
+
+            [class.shadow-sm]="isSelected(cell.iso)"
+
+            [class.hover:bg-amber-50]="cell.inMonth && !isSelected(cell.iso) && !cell.disabled"
+
+            [class.opacity-30]="cell.disabled"
+
+            [class.cursor-not-allowed]="cell.disabled"
+
+            [disabled]="cell.disabled"
+
+            (click)="selectDay(cell.iso, cell.disabled)"
+
+          >
+
+            {{ cell.date.getDate() }}
+
+          </button>
+
+        }
+
+      </div>
+
+    </div>
+
+  }
+
+</div>
+
+

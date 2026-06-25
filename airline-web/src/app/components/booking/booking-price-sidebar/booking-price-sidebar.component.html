@@ -1,0 +1,47 @@
+<div>
+  <h3 class="text-lg font-semibold text-slate-900">Price Details</h3>
+
+  <div class="mt-4 space-y-3 text-sm">
+    <div class="flex justify-between text-slate-600">
+      <span>{{ adultCount() }} Traveler(s) – Adult</span>
+      <span>{{ basePricePerAdult() * adultCount() | currencyFormat: currency() }}</span>
+    </div>
+
+    @if (tierAddonTotal() > 0) {
+      <div class="flex justify-between text-slate-600">
+        <span>{{ tierName() }}</span>
+        <span>{{ tierAddonTotal() | currencyFormat: currency() }}</span>
+      </div>
+    }
+
+    @if (webCheckIn()) {
+      <div class="flex justify-between text-slate-600">
+        <span>Web Check-In</span>
+        <span>{{ webCheckInPrice() | currencyFormat: currency() }}</span>
+      </div>
+    }
+
+    @if (cancellationProtection()) {
+      <div class="flex justify-between text-slate-600">
+        <span>Cancellation Protection</span>
+        <span>{{ cancellationPrice() | currencyFormat: currency() }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="mt-5 rounded-lg bg-brand-navy px-4 py-3">
+    <div class="flex items-center justify-between text-white">
+      <span class="font-semibold">Total Amount</span>
+      <span class="text-lg font-bold text-brand-gold">{{ totalPrice() | currencyFormat: currency() }}</span>
+    </div>
+  </div>
+
+  <p class="mt-3 text-[11px] leading-relaxed text-slate-400">
+    Baggage fees may apply. Prices include taxes and surcharges where noted.
+  </p>
+
+  <div class="mt-6 rounded-lg border border-slate-100 bg-slate-50 p-4 text-center">
+    <p class="text-sm font-semibold text-brand-navy">Book With MyAdventureCode</p>
+    <p class="mt-1 text-xs text-slate-500">Trusted travel experts · 24/7 support</p>
+  </div>
+</div>

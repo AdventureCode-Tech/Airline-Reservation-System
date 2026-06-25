@@ -1,0 +1,167 @@
+<!-- Hero -->
+<section class="relative bg-brand-navy py-16 lg:py-20">
+  <div
+    class="absolute inset-0 bg-cover bg-center opacity-20"
+    style="background-image: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600&q=80')"
+  ></div>
+  <div class="relative mx-auto max-w-3xl px-4 text-center lg:px-6">
+    <h1 class="font-serif text-3xl font-semibold text-white sm:text-4xl lg:text-5xl">Get In Touch</h1>
+    <p class="mt-4 text-sm leading-relaxed text-slate-300 sm:text-base">
+      Have questions? We're here to help you plan your perfect journey. Reach out to our team 24/7.
+    </p>
+  </div>
+</section>
+
+<!-- Contact form + info -->
+<section class="bg-slate-50 py-16 lg:py-20">
+  <div class="mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-2 lg:gap-16 lg:px-6">
+    <!-- Contact info -->
+    <div>
+      <h2 class="font-serif text-2xl font-semibold text-brand-navy sm:text-3xl">Contact Information</h2>
+      <p class="mt-3 text-sm text-slate-600 sm:text-base">
+        Prefer to talk? Our travel experts are ready to assist you anytime, day or night.
+      </p>
+
+      <ul class="mt-8 space-y-6">
+        <li class="flex gap-4">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-gold/15 text-brand-gold">
+            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+            </svg>
+          </span>
+          <div>
+            <p class="text-sm font-semibold text-brand-navy">Phone</p>
+            <a [href]="site.phoneHref" class="mt-1 block text-lg font-bold text-brand-gold hover:underline">{{ site.phone }}</a>
+            <p class="text-xs text-slate-500">Available 24/7</p>
+          </div>
+        </li>
+        <li class="flex gap-4">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-gold/15 text-brand-gold">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </span>
+          <div>
+            <p class="text-sm font-semibold text-brand-navy">Email</p>
+            <a [href]="'mailto:' + site.email" class="mt-1 block font-semibold text-brand-gold hover:underline">{{ site.email }}</a>
+            <p class="text-xs text-slate-500">Response within 24 hours</p>
+          </div>
+        </li>
+        <li class="flex gap-4">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-gold/15 text-brand-gold">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </span>
+          <div>
+            <p class="text-sm font-semibold text-brand-navy">Address</p>
+            <p class="mt-1 text-sm leading-relaxed text-slate-600">{{ site.address }}</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Form -->
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+      <h2 class="font-serif text-2xl font-semibold text-brand-navy">Send Us a Message</h2>
+
+      @if (successMessage()) {
+        <div class="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">
+          {{ successMessage() }}
+        </div>
+      }
+      @if (errorMessage()) {
+        <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <form class="mt-6 space-y-4" [formGroup]="contactForm" (ngSubmit)="submitContact()">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="firstName" class="mb-1 block text-sm font-medium text-slate-700">First Name</label>
+            <input id="firstName" type="text" formControlName="firstName" class="field-input" autocomplete="given-name" />
+            @if (contactForm.controls.firstName.touched && contactForm.controls.firstName.invalid) {
+              <p class="field-error">First name is required.</p>
+            }
+          </div>
+          <div>
+            <label for="lastName" class="mb-1 block text-sm font-medium text-slate-700">Last Name</label>
+            <input id="lastName" type="text" formControlName="lastName" class="field-input" autocomplete="family-name" />
+            @if (contactForm.controls.lastName.touched && contactForm.controls.lastName.invalid) {
+              <p class="field-error">Last name is required.</p>
+            }
+          </div>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="email" class="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+            <input id="email" type="email" formControlName="email" class="field-input" autocomplete="email" />
+            @if (contactForm.controls.email.touched && contactForm.controls.email.invalid) {
+              <p class="field-error">Valid email is required.</p>
+            }
+          </div>
+          <div>
+            <label for="phone" class="mb-1 block text-sm font-medium text-slate-700">Phone Number</label>
+            <input id="phone" type="tel" formControlName="phone" class="field-input" autocomplete="tel" />
+            @if (contactForm.controls.phone.touched && contactForm.controls.phone.invalid) {
+              <p class="field-error">Phone number is required.</p>
+            }
+          </div>
+        </div>
+
+        <div>
+          <label for="subject" class="mb-1 block text-sm font-medium text-slate-700">Subject</label>
+          <select id="subject" formControlName="subject" class="field-input">
+            @for (subject of subjects; track subject) {
+              <option [value]="subject">{{ subject }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="message" class="mb-1 block text-sm font-medium text-slate-700">Message</label>
+          <textarea
+            id="message"
+            formControlName="message"
+            rows="5"
+            class="field-input resize-y"
+            placeholder="Tell us about your travel plans or questions..."
+          ></textarea>
+          @if (contactForm.controls.message.touched && contactForm.controls.message.invalid) {
+            <p class="field-error">Message must be at least 10 characters.</p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary w-full"
+          [disabled]="loading()"
+        >
+          {{ loading() ? 'Sending…' : 'Send Message' }}
+        </button>
+        <p class="text-center text-xs text-slate-500">
+          We'll get back to you within 24 hours. For urgent matters, please call us directly.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Map -->
+<section class="bg-white pb-16 lg:pb-20">
+  <div class="mx-auto max-w-7xl px-4 lg:px-6">
+    <h2 class="mb-6 text-center font-serif text-2xl font-semibold text-brand-navy sm:text-3xl">Visit Our Office</h2>
+    <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-md">
+      <iframe
+        title="MyAdventureCode office location"
+        src="https://maps.google.com/maps?q=486+NJ-10,+Randolph,+NJ+07869,+USA&output=embed"
+        class="h-80 w-full sm:h-96"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </div>
+</section>

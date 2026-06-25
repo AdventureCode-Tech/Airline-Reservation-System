@@ -1,0 +1,41 @@
+<section class="bg-slate-50 py-14">
+  <div class="mx-auto max-w-7xl px-4 lg:px-6">
+    <h2 class="text-center font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">Our Travel Services</h2>
+    <p class="mt-2 text-center text-slate-600">Everything you need for your perfect journey</p>
+
+    <div class="mt-10 grid auto-rows-[160px] grid-cols-2 gap-4 sm:auto-rows-[180px] lg:grid-cols-4">
+      @for (service of services(); track service.title) {
+        <article
+          class="group relative overflow-hidden rounded-2xl"
+          [class]="service.gridClass"
+        >
+          <img
+            [src]="service.image"
+            [alt]="service.title"
+            class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            loading="lazy"
+            (error)="onImageError($event, service.title)"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+
+          @if (service.premium) {
+            <span class="absolute left-4 top-4 rounded bg-brand-gold px-2 py-0.5 text-xs font-bold uppercase text-white">
+              Premium
+            </span>
+          }
+
+          <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+            <h3 class="font-serif text-lg font-semibold text-white sm:text-xl">{{ service.title }}</h3>
+            <p class="mt-1 line-clamp-2 text-xs text-white/80 sm:text-sm">{{ service.desc }}</p>
+            <a
+              href="#"
+              class="mt-2 inline-flex items-center gap-1 text-sm font-medium text-white hover:underline"
+            >
+              {{ service.cta }} →
+            </a>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,198 @@
+@if (state.searchRequest(); as request) {
+  <section class="border-b border-slate-200 bg-slate-50 py-6 sm:py-8">
+    <div class="mx-auto max-w-7xl px-4 lg:px-6">
+      <app-flight-search-form
+        [readonly]="true"
+        [initialRequest]="request"
+        [showCardChrome]="true"
+        (searched)="onSearchUpdated()"
+      />
+    </div>
+  </section>
+}
+
+<div class="mx-auto max-w-7xl px-4 py-6 sm:py-8">
+  <div class="lg:grid lg:grid-cols-[260px_1fr] lg:gap-8">
+    <!-- Mobile filter toggle -->
+    <button
+      type="button"
+      class="mb-4 flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 shadow-sm lg:hidden"
+      (click)="toggleMobileFilters()"
+    >
+      <span>Filter Results</span>
+      <span>{{ showMobileFilters() ? '▴' : '▾' }}</span>
+    </button>
+
+    <!-- Sidebar filters -->
+    <aside
+      class="mb-6 space-y-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:mb-0 lg:block lg:h-fit lg:sticky lg:top-20"
+      [class.hidden]="!showMobileFilters()"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-semibold text-slate-900">Filter results</h2>
+          <p class="text-xs text-slate-500">Found {{ state.offers().length }} results</p>
+        </div>
+        <button
+          type="button"
+          class="text-sm font-medium text-brand-gold hover:text-brand-gold-dark"
+          (click)="resetFilters()"
+        >
+          Reset
+        </button>
+      </div>
+
+      <!-- Stops -->
+      <div>
+        <p class="mb-3 text-sm font-medium text-slate-700">Stop(s)</p>
+        <div class="space-y-2">
+          @for (option of stopOptions; track option.label) {
+            @if (option.value !== null) {
+              @let price = lowestPriceForStops(option.value);
+              @if (price) {
+                <label class="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-slate-100 px-3 py-2 text-sm hover:bg-slate-50">
+                  <span class="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="stops"
+                      class="border-slate-300 text-brand-gold focus:ring-brand-gold"
+                      [checked]="filters.maxStops === option.value"
+                      (change)="onStopsChange(option.value)"
+                    />
+                    {{ option.label }}
+                  </span>
+                  <span class="text-xs font-medium text-slate-600">{{ price }}</span>
+                </label>
+              }
+            }
+          }
+          <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-100 px-3 py-2 text-sm hover:bg-slate-50">
+            <input
+              type="radio"
+              name="stops"
+              class="border-slate-300 text-brand-gold focus:ring-brand-gold"
+              [checked]="filters.maxStops === null"
+              (change)="onStopsChange(null)"
+            />
+            Any stops
+          </label>
+        </div>
+      </div>
+
+      <!-- Price -->
+      @if (state.priceRange().max > 0) {
+        <div>
+          <label for="maxPrice" class="mb-2 block text-sm font-medium text-slate-700">
+            Fares
+          </label>
+          <input
+            id="maxPrice"
+            type="range"
+            class="w-full accent-brand-gold"
+            [min]="state.priceRange().min"
+            [max]="state.priceRange().max"
+            [value]="maxPriceValue"
+            (input)="onMaxPriceChange($event)"
+          />
+          <p class="mt-1 text-xs text-slate-500">
+            Up to {{ maxPriceValue | currencyFormat }}
+          </p>
+        </div>
+      }
+
+      <!-- Airlines -->
+      @if (state.availableAirlines().length > 0) {
+        <div>
+          <p class="mb-2 text-sm font-medium text-slate-700">Airlines</p>
+          <div class="space-y-2">
+            @for (airline of state.availableAirlines(); track airline) {
+              <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-600">
+                <input
+                  type="checkbox"
+                  class="rounded border-slate-300 text-brand-gold focus:ring-brand-gold"
+                  [checked]="filters.airlines.includes(airline)"
+                  (change)="toggleAirline(airline)"
+                />
+                {{ airline }}
+              </label>
+            }
+          </div>
+        </div>
+      }
+    </aside>
+
+    <!-- Results -->
+    <section>
+      <!-- Sort tabs -->
+      <div class="mb-5 grid grid-cols-3 gap-2 sm:gap-3">
+        <button
+          type="button"
+          class="rounded-xl border px-3 py-3 text-left transition sm:px-4"
+          [class.border-brand-gold]="activeSortTab() === 'recommended'"
+          [class.bg-amber-50]="activeSortTab() === 'recommended'"
+          [class.border-slate-200]="activeSortTab() !== 'recommended'"
+          [class.bg-white]="activeSortTab() !== 'recommended'"
+          (click)="setSortTab('recommended')"
+        >
+          <p class="text-xs font-medium text-slate-500 sm:text-sm">Recommended</p>
+          <p class="mt-0.5 text-sm font-bold text-slate-900">{{ sortTabMeta().recommended }}</p>
+        </button>
+        <button
+          type="button"
+          class="rounded-xl border px-3 py-3 text-left transition sm:px-4"
+          [class.border-brand-gold]="activeSortTab() === 'cheapest'"
+          [class.bg-amber-50]="activeSortTab() === 'cheapest'"
+          [class.border-slate-200]="activeSortTab() !== 'cheapest'"
+          [class.bg-white]="activeSortTab() !== 'cheapest'"
+          (click)="setSortTab('cheapest')"
+        >
+          <p class="text-xs font-medium text-slate-500 sm:text-sm">Cheapest</p>
+          <p class="mt-0.5 text-sm font-bold text-slate-900">{{ sortTabMeta().cheapest }}</p>
+        </button>
+        <button
+          type="button"
+          class="rounded-xl border px-3 py-3 text-left transition sm:px-4"
+          [class.border-brand-gold]="activeSortTab() === 'shortest'"
+          [class.bg-amber-50]="activeSortTab() === 'shortest'"
+          [class.border-slate-200]="activeSortTab() !== 'shortest'"
+          [class.bg-white]="activeSortTab() !== 'shortest'"
+          (click)="setSortTab('shortest')"
+        >
+          <p class="text-xs font-medium text-slate-500 sm:text-sm">Shortest</p>
+          <p class="mt-0.5 text-sm font-bold text-slate-900">{{ sortTabMeta().shortest }}</p>
+        </button>
+      </div>
+
+      <p class="mb-4 text-sm text-slate-600">
+        Showing {{ state.filteredOffers().length }} of {{ state.offers().length }} flights
+      </p>
+
+      @if (state.filteredOffers().length === 0) {
+        <div class="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <p class="text-slate-600">
+            @if (state.offers().length === 0) {
+              No flights found for this search. Try different dates or airports.
+            } @else {
+              No flights match your filters.
+            }
+          </p>
+          @if (state.offers().length > 0) {
+            <button
+              type="button"
+              class="mt-3 text-sm font-medium text-brand-gold hover:text-brand-gold-dark"
+              (click)="resetFilters()"
+            >
+              Clear filters
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="space-y-6">
+          @for (offer of state.filteredOffers(); track offer.offerId) {
+            <app-flight-card [offer]="offer" (select)="selectFlight($event)" />
+          }
+        </div>
+      }
+    </section>
+  </div>
+</div>

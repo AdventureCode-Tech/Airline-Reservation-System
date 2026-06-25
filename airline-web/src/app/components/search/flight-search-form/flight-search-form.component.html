@@ -1,0 +1,174 @@
+<div
+  class="w-full"
+  [class.rounded-2xl]="showCardChrome()"
+  [class.bg-white]="showCardChrome()"
+  [class.p-5]="showCardChrome()"
+  [class.shadow-xl]="showCardChrome()"
+  [class.ring-1]="showCardChrome()"
+  [class.ring-slate-100]="showCardChrome()"
+  [class.sm:p-6]="showCardChrome()"
+>
+  @if (readonly()) {
+    <div class="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div>
+        <p class="font-serif text-lg font-semibold text-slate-900">Your search</p>
+        <p class="mt-0.5 text-sm text-slate-500">
+          @if (isLocked) {
+            Review your trip details below or edit to change
+          } @else {
+            Update your trip details and search again
+          }
+        </p>
+      </div>
+      <div class="flex shrink-0 gap-2">
+        @if (isLocked) {
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-lg border border-brand-gold/30 bg-brand-gold px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-gold-dark"
+            (click)="startEditing()"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+            </svg>
+            Edit Search
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            (click)="cancelEditing()"
+          >
+            Cancel
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+    <div class="mb-5 flex flex-wrap items-center gap-3" [class.border-b]="!readonly()" [class.border-slate-100]="!readonly()" [class.pb-4]="!readonly()">
+      <span class="text-sm font-medium text-slate-600">Trip Type:</span>
+      @for (type of tripTypes; track type.value) {
+        <button
+          type="button"
+          class="rounded-full px-4 py-1.5 text-sm font-medium transition"
+          [class.bg-brand-gold]="searchForm.controls.tripType.value === type.value"
+          [class.text-white]="searchForm.controls.tripType.value === type.value"
+          [class.bg-slate-100]="searchForm.controls.tripType.value !== type.value"
+          [class.text-slate-700]="searchForm.controls.tripType.value !== type.value"
+          [class.hover:bg-slate-200]="searchForm.controls.tripType.value !== type.value && !isLocked"
+          [disabled]="isLocked"
+          (click)="setTripType(type.value)"
+        >
+          {{ type.label }}
+        </button>
+      }
+    </div>
+
+    <div
+      class="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_1fr_1fr_1fr] lg:items-end"
+      [class.opacity-80]="isLocked"
+    >
+      <app-airport-autocomplete formControlName="origin" label="From" placeholder="Origin city or code" />
+
+      <div class="hidden items-end justify-center pb-1 lg:flex">
+        <button
+          type="button"
+          class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-brand-gold hover:text-brand-gold disabled:cursor-not-allowed disabled:opacity-50"
+          aria-label="Swap origin and destination"
+          [disabled]="isLocked"
+          (click)="swapAirports()"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4M16 17H4m0 0l4 4m-4-4l4-4"/>
+          </svg>
+        </button>
+      </div>
+
+      <app-airport-autocomplete formControlName="destination" label="To" placeholder="Destination city or code" />
+      <app-date-picker formControlName="departureDate" label="Departure" [minDate]="minDate" />
+
+      @if (isRoundTrip) {
+        <app-date-picker formControlName="returnDate" label="Return" [minDate]="returnMinDate" />
+      } @else {
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">Return</label>
+          <div class="flex h-[42px] items-center rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 text-sm text-slate-400">
+            Not required for one way
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="mt-3 flex justify-center lg:hidden">
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-gold hover:text-brand-gold disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="isLocked"
+        (click)="swapAirports()"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4M16 17H4m0 0l4 4m-4-4l4-4"/>
+        </svg>
+        Swap airports
+      </button>
+    </div>
+
+    <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" [class.opacity-80]="isLocked">
+      <div class="relative">
+        <label class="mb-1 block text-sm font-medium text-slate-700">Travellers</label>
+        <button
+          type="button"
+          class="flex w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-left text-sm shadow-sm transition hover:border-brand-gold focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 disabled:cursor-default disabled:bg-slate-50"
+          [disabled]="isLocked"
+          (click)="toggleTravellers()"
+        >
+          <span class="text-slate-800">{{ travellerSummary }}</span>
+          <span class="text-slate-400">▾</span>
+        </button>
+        @if (showTravellers()) {
+          <div class="absolute z-30 mt-1 w-full min-w-[260px] rounded-lg border border-slate-200 bg-white p-4 shadow-xl">
+            @for (row of travellerRows; track row.field) {
+              <div class="flex items-center justify-between py-2">
+                <span class="text-sm text-slate-700">{{ row.label }}</span>
+                <div class="flex items-center gap-3">
+                  <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-slate-600 transition hover:border-brand-gold hover:text-brand-gold" (click)="adjustTravellers(row.field, -1)">−</button>
+                  <span class="min-w-[1.25rem] text-center text-sm font-medium">{{ searchForm.controls[row.field].value }}</span>
+                  <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-slate-600 transition hover:border-brand-gold hover:text-brand-gold" (click)="adjustTravellers(row.field, 1)">+</button>
+                </div>
+              </div>
+            }
+            <button type="button" class="mt-3 w-full rounded-lg bg-brand-gold py-2 text-sm font-semibold text-white hover:bg-brand-gold-dark" (click)="closeTravellers()">Done</button>
+          </div>
+        }
+      </div>
+
+      <div>
+        <label for="flightSearchCabin" class="mb-1 block text-sm font-medium text-slate-700">Cabin Class</label>
+        <select id="flightSearchCabin" formControlName="cabinClass" class="field-input disabled:cursor-default disabled:bg-slate-50">
+          @for (cabin of cabinClasses; track cabin.value) {
+            <option [value]="cabin.value">{{ cabin.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="sm:col-span-2 lg:col-span-2">
+        <label class="mb-1 block text-sm font-medium text-transparent">Search</label>
+        <button
+          type="submit"
+          class="w-full rounded-lg bg-brand-gold py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-gold-dark disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="loading() || isLocked"
+        >
+          {{ loading() ? 'Searching…' : 'Search Flights' }}
+        </button>
+      </div>
+    </div>
+
+    @if (searchForm.touched && searchForm.invalid && !isLocked) {
+      <p class="mt-3 text-sm text-red-600">Please fill in all required fields.</p>
+    }
+    @if (errorMessage()) {
+      <p class="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{{ errorMessage() }}</p>
+    }
+  </form>
+</div>

@@ -1,0 +1,82 @@
+<section class="bg-white py-14">
+  <div class="mx-auto max-w-7xl px-4 lg:px-6">
+    <h2 class="text-center font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">Special Offers</h2>
+
+    <!-- Filter pills -->
+    <div class="mt-6 flex flex-wrap justify-center gap-2">
+      @for (tab of tabs; track tab) {
+        <button
+          type="button"
+          class="rounded-full border px-4 py-2 text-sm font-medium transition"
+          [class.border-brand-orange]="activeTab() === tab"
+          [class.bg-brand-orange]="activeTab() === tab"
+          [class.text-white]="activeTab() === tab"
+          [class.border-slate-200]="activeTab() !== tab"
+          [class.bg-white]="activeTab() !== tab"
+          [class.text-slate-700]="activeTab() !== tab"
+          [class.hover:border-brand-orange]="activeTab() !== tab"
+          (click)="setTab(tab)"
+        >
+          {{ tab }}
+        </button>
+      }
+    </div>
+
+    <!-- Carousel -->
+    <div class="relative mt-8">
+      <button
+        type="button"
+        class="absolute -left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition hover:border-brand-gold hover:text-brand-gold sm:-left-5"
+        aria-label="Previous offers"
+        (click)="scrollPrev()"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <div
+        #scrollContainer
+        class="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-2 pb-2 scrollbar-hide"
+      >
+        @for (offer of filteredOffers(); track offer.id) {
+          <article
+            class="w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:shadow-md sm:w-[300px]"
+          >
+            <img
+              [src]="offer.image"
+              [alt]="offer.title"
+              class="h-44 w-full object-cover"
+              loading="lazy"
+              (error)="onImageError($event, offer.title)"
+            />
+            <div class="p-5">
+              <h3 class="font-serif text-xl font-semibold text-slate-900">{{ offer.title }}</h3>
+              <p class="mt-1 text-sm text-slate-500">{{ offer.subtitle }}</p>
+              <a
+                [href]="site.phoneHref"
+                class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800"
+              >
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                </svg>
+                Call Now
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="absolute -right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition hover:border-brand-gold hover:text-brand-gold sm:-right-5"
+        aria-label="Next offers"
+        (click)="scrollNext()"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>

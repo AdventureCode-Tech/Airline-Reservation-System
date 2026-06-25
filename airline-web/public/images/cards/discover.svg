@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 30" role="img" aria-label="Discover">
+  <rect width="48" height="30" rx="3" fill="#fff"/>
+  <rect x="1" y="1" width="46" height="28" rx="2" fill="none" stroke="#E5E7EB"/>
+  <text x="8" y="19" fill="#231F20" font-family="Arial,sans-serif" font-size="9" font-weight="700">DISCOVER</text>
+  <circle cx="38" cy="15" r="7" fill="#F47216"/>
+</svg>

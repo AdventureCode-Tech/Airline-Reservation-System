@@ -1,0 +1,23 @@
+<section class="bg-slate-50 py-14">
+  <div class="mx-auto max-w-7xl px-4 lg:px-6">
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-brand-gold/5 to-transparent px-6 py-8 sm:px-10">
+        <h2 class="font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">Tips for Booking Travel</h2>
+        <p class="mt-2 text-slate-600">Expert advice to help you save time and money</p>
+      </div>
+
+      <ul class="grid gap-4 p-6 sm:grid-cols-2 sm:gap-5 sm:p-10">
+        @for (tip of tips(); track tip) {
+          <li class="flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-gold/10 text-brand-gold">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+              </svg>
+            </span>
+            <p class="text-sm leading-relaxed text-slate-700">{{ tip }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

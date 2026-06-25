@@ -1,0 +1,84 @@
+<header>
+  <!-- Top bar — scrolls away -->
+  <div class="bg-brand-navy text-sm text-white">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-2 lg:px-6">
+      <a [href]="site.phoneHref" class="flex items-center gap-2 hover:text-brand-orange">
+        <svg class="h-4 w-4 text-brand-orange" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+        </svg>
+        <span>Call {{ site.phone }} for personalized assistance</span>
+      </a>
+      <p class="hidden items-center gap-2 sm:flex">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        {{ site.address }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Main header — stays fixed while scrolling -->
+  <div class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-6">
+      <a routerLink="/" class="shrink-0" (click)="closeMobileMenu()">
+        <img [src]="site.logoPath" [alt]="site.name" class="h-12 w-auto sm:h-14" />
+      </a>
+
+      <nav class="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
+        @for (link of navLinks; track link.label) {
+          <a
+            [routerLink]="link.route"
+            routerLinkActive="text-brand-gold"
+            [routerLinkActiveOptions]="{ exact: link.route === '/' }"
+            class="text-sm font-medium text-slate-700 transition hover:text-brand-gold"
+          >
+            {{ link.label }}
+          </a>
+        }
+      </nav>
+
+      <a [href]="site.phoneHref" class="hidden items-center gap-3 sm:flex">
+        <span class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-orange text-white shadow-md">
+          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+        </span>
+        <span class="text-left leading-tight">
+          <span class="block text-xs text-slate-500">24/7 Phone Number</span>
+          <span class="text-base font-bold text-brand-orange">{{ site.phone }}</span>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        class="rounded-lg p-2 text-slate-700 lg:hidden"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Toggle menu"
+      >
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          @if (mobileMenuOpen()) {
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          } @else {
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          }
+        </svg>
+      </button>
+    </div>
+
+    @if (mobileMenuOpen()) {
+      <nav class="border-t border-slate-200 bg-white px-4 py-4 lg:hidden" aria-label="Mobile navigation">
+        @for (link of navLinks; track link.label) {
+          <a
+            [routerLink]="link.route"
+            routerLinkActive="text-brand-gold"
+            (click)="closeMobileMenu()"
+            class="block py-2 text-sm font-medium text-slate-700"
+          >
+            {{ link.label }}
+          </a>
+        }
+        <a [href]="site.phoneHref" class="mt-2 block py-2 text-sm font-bold text-brand-orange">{{ site.phone }}</a>
+      </nav>
+    }
+  </div>
+</header>

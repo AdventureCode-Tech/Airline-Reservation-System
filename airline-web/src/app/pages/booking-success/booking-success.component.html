@@ -1,0 +1,317 @@
+<div class="print-root bg-slate-100 px-4 py-8 print:bg-white print:p-0 sm:py-12">
+  @if (state.bookingConfirmation(); as booking) {
+    <div class="mx-auto max-w-4xl print:mx-0 print:max-w-none">
+      <!-- Actions (hidden when printing) -->
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <p class="text-sm text-slate-600">Your flight confirmation is ready.</p>
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            (click)="printConfirmation()"
+          >
+            Print / Save PDF
+          </button>
+          <a routerLink="/" class="rounded-lg bg-brand-gold px-4 py-2 text-sm font-semibold text-white hover:bg-brand-gold-dark">
+            Book Another Flight
+          </a>
+        </div>
+      </div>
+
+      <!-- Confirmation document (ticket only — no site chrome or footer notice when printing) -->
+      <article class="print-ticket overflow-hidden rounded-sm bg-white shadow-lg print:rounded-none print:shadow-none">
+        <!-- Header -->
+        <header class="border-b-4 border-brand-gold bg-brand-navy px-6 py-6 sm:px-10 sm:py-8">
+          <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-4">
+              <img
+                [src]="site.logoPath"
+                [alt]="site.name"
+                class="h-14 w-auto rounded-lg bg-white p-1.5 sm:h-16"
+              />
+              <div>
+                <p class="font-serif text-xl font-semibold text-white sm:text-2xl">{{ site.name }}</p>
+                <p class="text-sm text-slate-300">{{ site.tagline }}</p>
+              </div>
+            </div>
+            <div class="text-left sm:text-right">
+              <p class="text-xs font-bold uppercase tracking-[0.25em] text-brand-gold">Flight Confirmation</p>
+              <p class="mt-1 text-sm text-slate-300">Issued {{ booking.bookedAt | date: 'medium' }}</p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Confirmation bar -->
+        <div class="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Confirmation Number</p>
+            <p class="mt-1 font-mono text-2xl font-bold text-brand-navy">{{ booking.bookingReference }}</p>
+          </div>
+          <div class="sm:text-right">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Booking Status</p>
+            <span class="mt-1 inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-1.5 text-sm font-bold uppercase text-amber-800 ring-1 ring-amber-200">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-brand-gold print:animate-none"></span>
+              {{ booking.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="space-y-0 divide-y divide-slate-200">
+          <!-- Trip summary -->
+          <section class="px-6 py-6 sm:px-10">
+            <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-brand-gold">Trip Summary</h2>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <p class="text-xs text-slate-500">Trip Type</p>
+                <p class="mt-0.5 font-semibold text-slate-900">{{ tripTypeLabel(booking.tripType) }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500">Route</p>
+                <p class="mt-0.5 font-semibold text-slate-900">{{ booking.origin }} → {{ booking.destination }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500">Departure</p>
+                <p class="mt-0.5 font-semibold text-slate-900">{{ booking.departureDate | date: 'fullDate' }}</p>
+              </div>
+              @if (booking.returnDate) {
+                <div>
+                  <p class="text-xs text-slate-500">Return</p>
+                  <p class="mt-0.5 font-semibold text-slate-900">{{ booking.returnDate | date: 'fullDate' }}</p>
+                </div>
+              }
+              <div>
+                <p class="text-xs text-slate-500">Cabin Class</p>
+                <p class="mt-0.5 font-semibold text-slate-900">{{ cabinLabel(booking.cabinClass) }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500">Ticket Tier</p>
+                <p class="mt-0.5 font-semibold text-slate-900">{{ booking.ticketTier }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500">Travelers</p>
+                <p class="mt-0.5 font-semibold text-slate-900">{{ booking.adults }} Adult{{ booking.adults === 1 ? '' : 's' }}</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Passengers -->
+          <section class="px-6 py-6 sm:px-10">
+            <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-brand-gold">Passenger Details</h2>
+            <div class="overflow-x-auto rounded-lg border border-slate-200">
+              <table class="min-w-full divide-y divide-slate-200 text-sm">
+                <thead class="bg-slate-50">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">#</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Passenger Name</th>
+                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Type</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                  @for (passenger of booking.passengers; track passenger.fullName; let i = $index) {
+                    <tr>
+                      <td class="px-4 py-3 text-slate-500">{{ i + 1 }}</td>
+                      <td class="px-4 py-3 font-medium text-slate-900">{{ passenger.fullName }}</td>
+                      <td class="px-4 py-3 text-slate-600">{{ passenger.type }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Outbound flight -->
+          <section class="px-6 py-6 sm:px-10">
+            <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-brand-gold">
+              {{ booking.returnSegments.length > 0 ? 'Departure Flight' : 'Flight Details' }}
+            </h2>
+            <div class="space-y-4">
+              @for (segment of booking.outboundSegments; track segment.flightNumber) {
+                <div class="rounded-lg border border-slate-200 p-4 sm:p-5">
+                  <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-3">
+                      <app-airline-logo
+                        [airline]="segment.airline"
+                        [carrierCode]="segment.carrierCode"
+                        [flightNumber]="segment.flightNumber"
+                      />
+                      <div>
+                        <p class="font-semibold text-slate-900">{{ segment.airline }}</p>
+                        <p class="text-xs text-slate-500">Flight {{ segment.flightNumber }}</p>
+                      </div>
+                    </div>
+                    <p class="text-xs font-medium text-brand-gold">{{ formatDuration(segment.durationMinutes) }}</p>
+                  </div>
+                  <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <p class="text-xs uppercase text-slate-400">Departure</p>
+                      <p class="text-lg font-bold text-slate-900">{{ segment.departureTime | date: 'hh:mm a' }}</p>
+                      <p class="text-sm font-medium text-slate-700">{{ segment.origin }}</p>
+                      <p class="text-xs text-slate-500">{{ segment.departureTime | date: 'EEE, MMM d, yyyy' }}</p>
+                    </div>
+                    <div class="sm:text-right">
+                      <p class="text-xs uppercase text-slate-400">Arrival</p>
+                      <p class="text-lg font-bold text-slate-900">{{ segment.arrivalTime | date: 'hh:mm a' }}</p>
+                      <p class="text-sm font-medium text-slate-700">{{ segment.destination }}</p>
+                      <p class="text-xs text-slate-500">{{ segment.arrivalTime | date: 'EEE, MMM d, yyyy' }}</p>
+                    </div>
+                  </div>
+                </div>
+              }
+              <p class="text-xs text-slate-500">
+                Total travel time: {{ formatDuration(totalDuration(booking.outboundSegments)) }}
+                · {{ stopsLabel(booking.outboundSegments) }}
+              </p>
+            </div>
+          </section>
+
+          @if (booking.returnSegments.length > 0) {
+            <section class="px-6 py-6 sm:px-10">
+              <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-brand-gold">Return Flight</h2>
+              <div class="space-y-4">
+                @for (segment of booking.returnSegments; track segment.flightNumber) {
+                  <div class="rounded-lg border border-slate-200 p-4 sm:p-5">
+                    <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                      <div class="flex items-center gap-3">
+                        <app-airline-logo
+                          [airline]="segment.airline"
+                          [carrierCode]="segment.carrierCode"
+                          [flightNumber]="segment.flightNumber"
+                        />
+                        <div>
+                          <p class="font-semibold text-slate-900">{{ segment.airline }}</p>
+                          <p class="text-xs text-slate-500">Flight {{ segment.flightNumber }}</p>
+                        </div>
+                      </div>
+                      <p class="text-xs font-medium text-brand-gold">{{ formatDuration(segment.durationMinutes) }}</p>
+                    </div>
+                    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <p class="text-xs uppercase text-slate-400">Departure</p>
+                        <p class="text-lg font-bold text-slate-900">{{ segment.departureTime | date: 'hh:mm a' }}</p>
+                        <p class="text-sm font-medium text-slate-700">{{ segment.origin }}</p>
+                        <p class="text-xs text-slate-500">{{ segment.departureTime | date: 'EEE, MMM d, yyyy' }}</p>
+                      </div>
+                      <div class="sm:text-right">
+                        <p class="text-xs uppercase text-slate-400">Arrival</p>
+                        <p class="text-lg font-bold text-slate-900">{{ segment.arrivalTime | date: 'hh:mm a' }}</p>
+                        <p class="text-sm font-medium text-slate-700">{{ segment.destination }}</p>
+                        <p class="text-xs text-slate-500">{{ segment.arrivalTime | date: 'EEE, MMM d, yyyy' }}</p>
+                      </div>
+                    </div>
+                  </div>
+                }
+                <p class="text-xs text-slate-500">
+                  Total travel time: {{ formatDuration(totalDuration(booking.returnSegments)) }}
+                  · {{ stopsLabel(booking.returnSegments) }}
+                </p>
+              </div>
+            </section>
+          }
+
+          <!-- Fare summary -->
+          <section class="px-6 py-6 sm:px-10">
+            <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-brand-gold">Fare Summary</h2>
+            <div class="overflow-hidden rounded-lg border border-slate-200">
+              <table class="min-w-full text-sm">
+                <tbody class="divide-y divide-slate-100">
+                  <tr class="bg-white">
+                    <td class="px-4 py-3 text-slate-600">
+                      Base fare ({{ booking.adults }} × {{ booking.basePricePerAdult | currencyFormat: booking.currency }})
+                    </td>
+                    <td class="px-4 py-3 text-right font-medium text-slate-900">
+                      {{ booking.basePricePerAdult * booking.adults | currencyFormat: booking.currency }}
+                    </td>
+                  </tr>
+                  @if (booking.ticketTierAddon > 0) {
+                    <tr class="bg-white">
+                      <td class="px-4 py-3 text-slate-600">{{ booking.ticketTier }}</td>
+                      <td class="px-4 py-3 text-right font-medium text-slate-900">
+                        {{ booking.ticketTierAddon | currencyFormat: booking.currency }}
+                      </td>
+                    </tr>
+                  }
+                  @if (booking.webCheckIn) {
+                    <tr class="bg-white">
+                      <td class="px-4 py-3 text-slate-600">Web Check-In</td>
+                      <td class="px-4 py-3 text-right font-medium text-slate-900">
+                        {{ booking.webCheckInPrice | currencyFormat: booking.currency }}
+                      </td>
+                    </tr>
+                  }
+                  @if (booking.cancellationProtection) {
+                    <tr class="bg-white">
+                      <td class="px-4 py-3 text-slate-600">Cancellation Protection</td>
+                      <td class="px-4 py-3 text-right font-medium text-slate-900">
+                        {{ booking.cancellationProtectionPrice | currencyFormat: booking.currency }}
+                      </td>
+                    </tr>
+                  }
+                  <tr class="bg-brand-navy">
+                    <td class="px-4 py-4 text-base font-semibold text-white">Total Amount</td>
+                    <td class="px-4 py-4 text-right text-xl font-bold text-brand-gold">
+                      {{ booking.totalPrice | currencyFormat: booking.currency }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-2 text-xs text-slate-400">Includes taxes and surcharges where applicable.</p>
+          </section>
+
+          <!-- Payment & contact -->
+          <section class="grid gap-0 lg:grid-cols-2 lg:divide-x lg:divide-slate-200">
+            <div class="px-6 py-6 sm:px-10">
+              <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-brand-gold">Payment Information</h2>
+              <dl class="space-y-3 text-sm">
+                <div>
+                  <dt class="text-xs text-slate-500">Card</dt>
+                  <dd class="flex items-center gap-2 font-medium text-slate-900">
+                    <app-card-brand-logo [brand]="booking.paymentCardBrand" height="sm" />
+                    <span>{{ booking.paymentCardBrand }} ending in {{ booking.paymentLastFour }}</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-slate-500">Card Holder</dt>
+                  <dd class="font-medium text-slate-900">{{ booking.paymentCardHolder }}</dd>
+                </div>
+              </dl>
+            </div>
+            <div class="border-t border-slate-200 px-6 py-6 lg:border-t-0 sm:px-10">
+              <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-brand-gold">Contact Information</h2>
+              <dl class="space-y-3 text-sm">
+                <div>
+                  <dt class="text-xs text-slate-500">Email</dt>
+                  <dd class="font-medium text-slate-900">{{ booking.email }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-slate-500">Phone</dt>
+                  <dd class="font-medium text-slate-900">{{ booking.phone }}</dd>
+                </div>
+              </dl>
+            </div>
+          </section>
+        </div>
+
+        <!-- Footer (hidden when printing — ticket ends at payment & contact) -->
+        <footer class="border-t border-slate-200 bg-slate-50 px-6 py-6 print:hidden sm:px-10">
+          <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900">
+            <p class="font-semibold">Important Notice</p>
+            <p class="mt-1 leading-relaxed">
+              Your booking is currently <strong>{{ booking.status }}</strong>. Our travel team is confirming your reservation with the airline.
+              You will receive a final confirmation email once complete. Please retain this confirmation number for all inquiries.
+            </p>
+          </div>
+          <div class="mt-5 flex flex-col gap-2 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+            <p>{{ site.name }} · {{ site.address }}</p>
+            <p>
+              Support:
+              <a [href]="site.phoneHref" class="font-semibold text-brand-gold">{{ site.phone }}</a>
+              ·
+              <a [href]="'mailto:' + site.email" class="font-semibold text-brand-gold">{{ site.email }}</a>
+            </p>
+          </div>
+        </footer>
+      </article>
+    </div>
+  }
+</div>

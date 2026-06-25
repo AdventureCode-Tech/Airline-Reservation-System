@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .field-input {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20;
+  }
+
+  .field-error {
+    @apply mt-1 text-xs text-red-600;
+  }
+
+  .btn-primary {
+    @apply rounded-lg bg-brand-gold px-6 py-3.5 text-base font-semibold text-white shadow-sm transition hover:bg-brand-gold-dark disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary-lg {
+    @apply rounded-xl bg-brand-gold px-8 py-4 text-lg font-bold text-white shadow-md transition hover:bg-brand-gold-dark disabled:cursor-not-allowed disabled:opacity-50;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media print {
+  app-site-header,
+  app-site-footer {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-white font-sans text-slate-800 antialiased;
+  }
+}
