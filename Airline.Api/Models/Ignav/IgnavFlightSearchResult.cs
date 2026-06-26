@@ -21,6 +21,9 @@ public class IgnavFlightOffer
 
     [JsonPropertyName("inbound")]
     public IgnavFlightLeg? Inbound { get; set; }
+
+    [JsonPropertyName("cabin_class")]
+    public string? CabinClass { get; set; }
 }
 
 public class IgnavPrice
@@ -58,14 +61,26 @@ public class IgnavFlightSegment
     [JsonPropertyName("departure_airport")]
     public string DepartureAirport { get; set; } = string.Empty;
 
+    [JsonPropertyName("departure_time_local")]
+    public string DepartureTimeLocal { get; set; } = string.Empty;
+
+    [JsonPropertyName("departure_timezone")]
+    public string? DepartureTimezone { get; set; }
+
     [JsonPropertyName("departure_time_utc")]
-    public DateTime DepartureTimeUtc { get; set; }
+    public string? DepartureTimeUtc { get; set; }
 
     [JsonPropertyName("arrival_airport")]
     public string ArrivalAirport { get; set; } = string.Empty;
 
+    [JsonPropertyName("arrival_time_local")]
+    public string ArrivalTimeLocal { get; set; } = string.Empty;
+
+    [JsonPropertyName("arrival_timezone")]
+    public string? ArrivalTimezone { get; set; }
+
     [JsonPropertyName("arrival_time_utc")]
-    public DateTime ArrivalTimeUtc { get; set; }
+    public string? ArrivalTimeUtc { get; set; }
 
     [JsonPropertyName("duration_minutes")]
     public int DurationMinutes { get; set; }

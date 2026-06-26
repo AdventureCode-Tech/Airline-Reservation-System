@@ -161,8 +161,8 @@ export class FlightSearchStateService {
           return this.totalDuration(a) - this.totalDuration(b);
         case 'departure':
           return (
-            new Date(a.outboundSegments[0]?.departureTime ?? 0).getTime() -
-            new Date(b.outboundSegments[0]?.departureTime ?? 0).getTime()
+            new Date(a.outboundSegments[0]?.departureTimeUtc ?? a.outboundSegments[0]?.departureTime ?? 0).getTime() -
+            new Date(b.outboundSegments[0]?.departureTimeUtc ?? b.outboundSegments[0]?.departureTime ?? 0).getTime()
           );
         case 'price':
         default:

@@ -79,12 +79,50 @@ export function stopsLabel(segments: unknown[]): string {
 }
 
 export function layoverMinutes(
-  prev: { arrivalTime: string },
-  next: { departureTime: string }
+  prev: { arrivalTimeUtc?: string; arrivalTime: string },
+  next: { departureTimeUtc?: string; departureTime: string }
 ): number {
-  const arrival = new Date(prev.arrivalTime).getTime();
-  const departure = new Date(next.departureTime).getTime();
+  const arrival = new Date(prev.arrivalTimeUtc ?? prev.arrivalTime).getTime();
+  const departure = new Date(next.departureTimeUtc ?? next.departureTime).getTime();
   return Math.max(0, Math.round((departure - arrival) / 60000));
+}
+
+/** Format Ignav airport-local time without browser timezone conversion. */
+export function formatAirportLocalTime(
+  localIso: string,
+  format: 'time' | 'date' | 'datetime' = 'time'
+): string {
+  if (!localIso) {
+    return '—';
+  }
+
+  const [datePart, timePart = '00:00:00'] = localIso.split('T');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hour, minute] = timePart.split(':').map(Number);
+  const wallClock = new Date(year, month - 1, day, hour, minute);
+
+  switch (format) {
+    case 'date':
+      return wallClock.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      });
+    case 'datetime':
+      return wallClock.toLocaleString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      });
+    case 'time':
+    default:
+      return wallClock.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+      });
+  }
 }
 
 export function splitPrice(amount: number): { whole: string; cents: string } {

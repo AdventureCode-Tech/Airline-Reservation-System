@@ -19,9 +19,9 @@
             <div class="min-w-[90px]">
               <p class="text-sm font-bold text-slate-900">
                 {{ firstSegment(outbound).origin }}
-                {{ firstSegment(outbound).departureTime | date: 'hh:mm a' }}
+                {{ firstSegment(outbound).departureTime | airportTime:'time' }}
               </p>
-              <p class="text-xs text-slate-500">{{ firstSegment(outbound).departureTime | date: 'EEE, MMM d' }}</p>
+              <p class="text-xs text-slate-500">{{ firstSegment(outbound).departureTime | airportTime:'date' }}</p>
             </div>
             <div class="flex min-w-[100px] flex-1 flex-col items-center px-2">
               <span class="text-xs font-medium text-brand-gold">{{ formatDuration(totalDuration(outbound)) }}</span>
@@ -35,9 +35,9 @@
             <div class="min-w-[90px] text-right">
               <p class="text-sm font-bold text-slate-900">
                 {{ lastSegment(outbound).destination }}
-                {{ lastSegment(outbound).arrivalTime | date: 'hh:mm a' }}
+                {{ lastSegment(outbound).arrivalTime | airportTime:'time' }}
               </p>
-              <p class="text-xs text-slate-500">{{ lastSegment(outbound).arrivalTime | date: 'EEE, MMM d' }}</p>
+              <p class="text-xs text-slate-500">{{ lastSegment(outbound).arrivalTime | airportTime:'date' }}</p>
             </div>
           </div>
         </div>
@@ -60,9 +60,9 @@
               <div class="min-w-[90px]">
                 <p class="text-sm font-bold text-slate-900">
                   {{ firstSegment(returnSegs).origin }}
-                  {{ firstSegment(returnSegs).departureTime | date: 'hh:mm a' }}
+                  {{ firstSegment(returnSegs).departureTime | airportTime:'time' }}
                 </p>
-                <p class="text-xs text-slate-500">{{ firstSegment(returnSegs).departureTime | date: 'EEE, MMM d' }}</p>
+                <p class="text-xs text-slate-500">{{ firstSegment(returnSegs).departureTime | airportTime:'date' }}</p>
               </div>
               <div class="flex min-w-[100px] flex-1 flex-col items-center px-2">
                 <span class="text-xs font-medium text-brand-gold">{{ formatDuration(totalDuration(returnSegs)) }}</span>
@@ -76,9 +76,9 @@
               <div class="min-w-[90px] text-right">
                 <p class="text-sm font-bold text-slate-900">
                   {{ lastSegment(returnSegs).destination }}
-                  {{ lastSegment(returnSegs).arrivalTime | date: 'hh:mm a' }}
+                  {{ lastSegment(returnSegs).arrivalTime | airportTime:'time' }}
                 </p>
-                <p class="text-xs text-slate-500">{{ lastSegment(returnSegs).arrivalTime | date: 'EEE, MMM d' }}</p>
+                <p class="text-xs text-slate-500">{{ lastSegment(returnSegs).arrivalTime | airportTime:'date' }}</p>
               </div>
             </div>
           </div>

@@ -645,9 +645,23 @@ public class BookingEmailBuilder : IBookingEmailBuilder
 
     private static (string Time, string Date) FormatSegmentDateTime(string iso)
     {
+        if (DateTime.TryParseExact(
+                iso,
+                "yyyy-MM-dd'T'HH:mm:ss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var local))
+        {
+            return (
+                local.ToString("hh:mm tt", CultureInfo.InvariantCulture),
+                local.ToString("ddd, MMM d, yyyy", CultureInfo.InvariantCulture));
+        }
+
         if (DateTimeOffset.TryParse(iso, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dto))
         {
-            return (dto.ToString("hh:mm tt", CultureInfo.InvariantCulture), dto.ToString("ddd, MMM d, yyyy", CultureInfo.InvariantCulture));
+            return (
+                dto.ToString("hh:mm tt", CultureInfo.InvariantCulture),
+                dto.ToString("ddd, MMM d, yyyy", CultureInfo.InvariantCulture));
         }
 
         return (Encode(iso), string.Empty);

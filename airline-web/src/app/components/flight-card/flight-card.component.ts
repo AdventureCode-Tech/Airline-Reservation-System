@@ -1,7 +1,7 @@
-import { DatePipe } from '@angular/common';
 import { Component, input, output, signal } from '@angular/core';
 
 import { FlightOffer, FlightSegment } from '../../models';
+import { AirportLocalTimePipe } from '../../pipes/airport-local-time.pipe';
 import { currencyDisplayPrefix } from '../../utils/currency.utils';
 import {
   formatDurationMinutes,
@@ -14,7 +14,7 @@ import { FlightLegDetailsComponent } from './flight-leg-details.component';
 
 @Component({
   selector: 'app-flight-card',
-  imports: [DatePipe, FlightLegDetailsComponent, AirlineLogoComponent],
+  imports: [AirportLocalTimePipe, FlightLegDetailsComponent, AirlineLogoComponent],
   templateUrl: './flight-card.component.html',
 })
 export class FlightCardComponent {

@@ -1,7 +1,7 @@
-import { DatePipe } from '@angular/common';
 import { Component, input } from '@angular/core';
 
 import { FlightSegment } from '../../models';
+import { AirportLocalTimePipe } from '../../pipes/airport-local-time.pipe';
 import {
   formatDurationMinutes,
   layoverMinutes,
@@ -11,7 +11,7 @@ import { AirlineLogoComponent } from '../airline-logo/airline-logo.component';
 
 @Component({
   selector: 'app-flight-leg-details',
-  imports: [DatePipe, AirlineLogoComponent],
+  imports: [AirportLocalTimePipe, AirlineLogoComponent],
   template: `
     <div class="flex items-center justify-between">
       <h4 class="text-sm font-semibold text-slate-900">{{ title() }}</h4>
@@ -39,18 +39,18 @@ import { AirlineLogoComponent } from '../airline-logo/airline-logo.component';
 
           <div class="mt-4 flex flex-wrap justify-between gap-4">
             <div>
-              <p class="text-sm font-bold text-slate-900">{{ segment.departureTime | date: 'hh:mm a' }}</p>
+              <p class="text-sm font-bold text-slate-900">{{ segment.departureTime | airportTime:'time' }}</p>
               <p class="text-xs text-slate-600">{{ segment.origin }}</p>
-              <p class="text-xs text-slate-400">{{ segment.departureTime | date: 'EEE, MMM d' }}</p>
+              <p class="text-xs text-slate-400">{{ segment.departureTime | airportTime:'date' }}</p>
             </div>
             <div class="flex flex-col items-center justify-center px-2">
               <span class="text-xs text-brand-gold">{{ formatDuration(segment.durationMinutes) }}</span>
               <span class="mt-1 h-px w-16 bg-slate-200"></span>
             </div>
             <div class="text-right">
-              <p class="text-sm font-bold text-slate-900">{{ segment.arrivalTime | date: 'hh:mm a' }}</p>
+              <p class="text-sm font-bold text-slate-900">{{ segment.arrivalTime | airportTime:'time' }}</p>
               <p class="text-xs text-slate-600">{{ segment.destination }}</p>
-              <p class="text-xs text-slate-400">{{ segment.arrivalTime | date: 'EEE, MMM d' }}</p>
+              <p class="text-xs text-slate-400">{{ segment.arrivalTime | airportTime:'date' }}</p>
             </div>
           </div>
         </div>

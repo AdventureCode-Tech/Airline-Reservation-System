@@ -15,11 +15,15 @@ public static class FlightMappings
     {
         return new IgnavFlightSearchRequest
         {
-            Origin = request.Origin,
-            Destination = request.Destination,
+            Origin = request.Origin.Trim().ToUpperInvariant(),
+            Destination = request.Destination.Trim().ToUpperInvariant(),
             DepartureDate = request.DepartureDate.ToString("yyyy-MM-dd"),
             ReturnDate = request.ReturnDate?.ToString("yyyy-MM-dd"),
-            Adults = request.Adults
+            Adults = request.Adults,
+            Children = request.Children,
+            InfantsOnLap = request.Infants,
+            CabinClass = ToIgnavCabinClass(request.CabinClass),
+            Market = "US"
         };
     }
 
@@ -42,6 +46,7 @@ public static class FlightMappings
             OfferId = offer.Id,
             TotalPrice = offer.Price?.Amount ?? 0,
             Currency = offer.Price?.Currency ?? string.Empty,
+            CabinClass = offer.CabinClass,
             OutboundSegments = MapLegSegments(offer.Outbound),
             ReturnSegments = MapLegSegments(offer.Inbound)
         };
@@ -66,9 +71,21 @@ public static class FlightMappings
             CarrierCode = segment.MarketingCarrierCode,
             Origin = segment.DepartureAirport,
             Destination = segment.ArrivalAirport,
-            DepartureTime = segment.DepartureTimeUtc,
-            ArrivalTime = segment.ArrivalTimeUtc,
+            DepartureTime = segment.DepartureTimeLocal,
+            ArrivalTime = segment.ArrivalTimeLocal,
+            DepartureTimeUtc = segment.DepartureTimeUtc,
+            ArrivalTimeUtc = segment.ArrivalTimeUtc,
+            DepartureTimezone = segment.DepartureTimezone,
+            ArrivalTimezone = segment.ArrivalTimezone,
             DurationMinutes = segment.DurationMinutes
         };
     }
+
+    private static string ToIgnavCabinClass(string? cabinClass) => cabinClass?.Trim() switch
+    {
+        "PremiumEconomy" => "premium_economy",
+        "Business" => "business",
+        "First" => "first",
+        _ => "economy"
+    };
 }

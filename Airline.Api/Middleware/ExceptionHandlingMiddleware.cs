@@ -36,11 +36,22 @@ public class ExceptionHandlingMiddleware
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        var statusCode = exception switch
+        {
+            HttpRequestException http when http.StatusCode.HasValue => (int)http.StatusCode.Value,
+            _ => (int)HttpStatusCode.InternalServerError
+        };
+
+        context.Response.StatusCode = statusCode;
+
+        var message = statusCode == (int)HttpStatusCode.InternalServerError
+            ? "Internal Server Error"
+            : "Request failed.";
 
         var response = ApiResponse<object?>.FailureResponse(
             [exception.Message],
-            "Internal Server Error");
+            message);
 
         await context.Response.WriteAsJsonAsync(response);
     }

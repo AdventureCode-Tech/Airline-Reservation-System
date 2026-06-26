@@ -11,4 +11,10 @@ public class FlightSearchRequest
     public DateOnly? ReturnDate { get; set; }
 
     public int Adults { get; set; } = 1;
+
+    public int Children { get; set; }
+
+    public int Infants { get; set; }
+
+    public string? CabinClass { get; set; }
 }

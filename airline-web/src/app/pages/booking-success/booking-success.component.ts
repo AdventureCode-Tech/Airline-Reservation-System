@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { CardBrandLogoComponent } from '../../components/card-brand-logo/card-brand-logo.component';
 import { CurrencyFormatPipe } from '../../pipes/currency-format.pipe';
+import { AirportLocalTimePipe } from '../../pipes/airport-local-time.pipe';
 import { AirlineLogoComponent } from '../../components/airline-logo/airline-logo.component';
 import { SITE } from '../../core/site.constants';
 import { formatCabinClass, formatDurationMinutes, stopsLabel, totalSegmentDuration } from '../../utils/flight.utils';
@@ -11,7 +12,7 @@ import { FlightSearchStateService } from '../../services/flight-search-state.ser
 
 @Component({
   selector: 'app-booking-success',
-  imports: [RouterLink, DatePipe, DecimalPipe, AirlineLogoComponent, CardBrandLogoComponent, CurrencyFormatPipe],
+  imports: [RouterLink, DatePipe, DecimalPipe, AirlineLogoComponent, CardBrandLogoComponent, CurrencyFormatPipe, AirportLocalTimePipe],
   templateUrl: './booking-success.component.html',
   styles: [
     `

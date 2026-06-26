@@ -144,15 +144,15 @@
                   <div class="mt-4 grid gap-4 sm:grid-cols-2">
                     <div>
                       <p class="text-xs uppercase text-slate-400">Departure</p>
-                      <p class="text-lg font-bold text-slate-900">{{ segment.departureTime | date: 'hh:mm a' }}</p>
+                      <p class="text-lg font-bold text-slate-900">{{ segment.departureTime | airportTime:'time' }}</p>
                       <p class="text-sm font-medium text-slate-700">{{ segment.origin }}</p>
-                      <p class="text-xs text-slate-500">{{ segment.departureTime | date: 'EEE, MMM d, yyyy' }}</p>
+                      <p class="text-xs text-slate-500">{{ segment.departureTime | airportTime:'date' }}</p>
                     </div>
                     <div class="sm:text-right">
                       <p class="text-xs uppercase text-slate-400">Arrival</p>
-                      <p class="text-lg font-bold text-slate-900">{{ segment.arrivalTime | date: 'hh:mm a' }}</p>
+                      <p class="text-lg font-bold text-slate-900">{{ segment.arrivalTime | airportTime:'time' }}</p>
                       <p class="text-sm font-medium text-slate-700">{{ segment.destination }}</p>
-                      <p class="text-xs text-slate-500">{{ segment.arrivalTime | date: 'EEE, MMM d, yyyy' }}</p>
+                      <p class="text-xs text-slate-500">{{ segment.arrivalTime | airportTime:'date' }}</p>
                     </div>
                   </div>
                 </div>
@@ -187,15 +187,15 @@
                     <div class="mt-4 grid gap-4 sm:grid-cols-2">
                       <div>
                         <p class="text-xs uppercase text-slate-400">Departure</p>
-                        <p class="text-lg font-bold text-slate-900">{{ segment.departureTime | date: 'hh:mm a' }}</p>
+                        <p class="text-lg font-bold text-slate-900">{{ segment.departureTime | airportTime:'time' }}</p>
                         <p class="text-sm font-medium text-slate-700">{{ segment.origin }}</p>
-                        <p class="text-xs text-slate-500">{{ segment.departureTime | date: 'EEE, MMM d, yyyy' }}</p>
+                        <p class="text-xs text-slate-500">{{ segment.departureTime | airportTime:'date' }}</p>
                       </div>
                       <div class="sm:text-right">
                         <p class="text-xs uppercase text-slate-400">Arrival</p>
-                        <p class="text-lg font-bold text-slate-900">{{ segment.arrivalTime | date: 'hh:mm a' }}</p>
+                        <p class="text-lg font-bold text-slate-900">{{ segment.arrivalTime | airportTime:'time' }}</p>
                         <p class="text-sm font-medium text-slate-700">{{ segment.destination }}</p>
-                        <p class="text-xs text-slate-500">{{ segment.arrivalTime | date: 'EEE, MMM d, yyyy' }}</p>
+                        <p class="text-xs text-slate-500">{{ segment.arrivalTime | airportTime:'date' }}</p>
                       </div>
                     </div>
                   </div>

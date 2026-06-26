@@ -12,7 +12,8 @@ public class IgnavService : IIgnavService
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true
     };
 
     private readonly IHttpClientFactory _httpClientFactory;
@@ -52,7 +53,34 @@ public class IgnavService : IIgnavService
         }
 
         using var response = await client.SendAsync(requestMessage, cancellationToken);
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        return await response.Content.ReadAsStringAsync(cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var message = TryReadIgnavError(body)
+                ?? $"Flight search failed with status {(int)response.StatusCode}.";
+            throw new HttpRequestException(message, null, response.StatusCode);
+        }
+
+        return body;
+    }
+
+    private static string? TryReadIgnavError(string body)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(body);
+            if (document.RootElement.TryGetProperty("error", out var error) &&
+                error.TryGetProperty("message", out var message))
+            {
+                return message.GetString();
+            }
+        }
+        catch (JsonException)
+        {
+            // Fall through to generic message.
+        }
+
+        return null;
     }
 }

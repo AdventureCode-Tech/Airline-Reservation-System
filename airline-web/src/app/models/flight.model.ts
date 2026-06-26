@@ -20,8 +20,15 @@ export interface FlightSegment {
   carrierCode?: string;
   origin: string;
   destination: string;
+  /** Airport-local wall-clock departure time from Ignav. */
   departureTime: string;
+  /** Airport-local wall-clock arrival time from Ignav. */
   arrivalTime: string;
+  /** UTC instant for calculations (RFC 3339). */
+  departureTimeUtc?: string;
+  arrivalTimeUtc?: string;
+  departureTimezone?: string;
+  arrivalTimezone?: string;
   durationMinutes: number;
 }
 
@@ -29,6 +36,7 @@ export interface FlightOffer {
   offerId: string;
   totalPrice: number;
   currency: string;
+  cabinClass?: string;
   outboundSegments: FlightSegment[];
   returnSegments: FlightSegment[];
 }

@@ -37,7 +37,7 @@ public class FlightSearchValidator
         {
             errors.Add("Departure date is required.");
         }
-        else if (request.DepartureDate < DateOnly.FromDateTime(DateTime.UtcNow))
+        else if (request.DepartureDate < DateOnly.FromDateTime(DateTime.Now))
         {
             errors.Add("Departure date cannot be in the past.");
         }
@@ -50,6 +50,26 @@ public class FlightSearchValidator
         if (request.Adults < 1)
         {
             errors.Add("At least one adult passenger is required.");
+        }
+
+        if (request.Children < 0)
+        {
+            errors.Add("Children count cannot be negative.");
+        }
+
+        if (request.Infants < 0)
+        {
+            errors.Add("Infants count cannot be negative.");
+        }
+
+        if (request.Adults + request.Children + request.Infants > 9)
+        {
+            errors.Add("A maximum of 9 passengers is allowed per search.");
+        }
+
+        if (request.Infants > request.Adults)
+        {
+            errors.Add("Lap infants cannot exceed the number of adults.");
         }
 
         return errors;
