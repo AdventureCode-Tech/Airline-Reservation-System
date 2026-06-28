@@ -7,7 +7,7 @@ import { CurrencyFormatPipe } from '../../pipes/currency-format.pipe';
 import { AirportLocalTimePipe } from '../../pipes/airport-local-time.pipe';
 import { AirlineLogoComponent } from '../../components/airline-logo/airline-logo.component';
 import { SITE } from '../../core/site.constants';
-import { formatCabinClass, formatDurationMinutes, stopsLabel, totalSegmentDuration } from '../../utils/flight.utils';
+import { formatCabinClass, formatDurationMinutes, legDisplayDuration, stopsLabel } from '../../utils/flight.utils';
 import { FlightSearchStateService } from '../../services/flight-search-state.service';
 
 @Component({
@@ -48,7 +48,7 @@ export class BookingSuccessComponent {
 
   readonly formatDuration = formatDurationMinutes;
   readonly stopsLabel = stopsLabel;
-  readonly totalDuration = totalSegmentDuration;
+  readonly legDuration = legDisplayDuration;
 
   constructor() {
     if (!this.state.hasBookingConfirmation()) {

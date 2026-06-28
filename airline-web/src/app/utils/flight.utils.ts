@@ -64,8 +64,43 @@ export function formatDurationMinutes(minutes: number): string {
   return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
 }
 
+type LegSegment = {
+  durationMinutes: number;
+  departureTime: string;
+  arrivalTime: string;
+  departureTimeUtc?: string;
+  arrivalTimeUtc?: string;
+};
+
 export function totalSegmentDuration(segments: { durationMinutes: number }[]): number {
   return segments.reduce((sum, s) => sum + s.durationMinutes, 0);
+}
+
+/** Elapsed wall-clock time from first departure to last arrival (uses UTC when available). */
+export function legElapsedMinutes(segments: LegSegment[]): number {
+  if (!segments.length) return 0;
+  const first = segments[0];
+  const last = segments[segments.length - 1];
+  const dep = new Date(first.departureTimeUtc ?? first.departureTime).getTime();
+  const arr = new Date(last.arrivalTimeUtc ?? last.arrivalTime).getTime();
+  if (Number.isNaN(dep) || Number.isNaN(arr)) return 0;
+  return Math.max(0, Math.round((arr - dep) / 60000));
+}
+
+/** Total travel time for a leg — prefer Ignav leg duration (includes layovers). */
+export function legDisplayDuration(segments: LegSegment[], legMinutes?: number): number {
+  if (legMinutes && legMinutes > 0) return legMinutes;
+  const elapsed = legElapsedMinutes(segments);
+  if (elapsed > 0) return elapsed;
+  return totalSegmentDuration(segments);
+}
+
+/** True when arrival is on a later calendar day than departure (airport-local). */
+export function arrivesNextDay(departureLocal: string, arrivalLocal: string): boolean {
+  if (!departureLocal || !arrivalLocal) return false;
+  const depDate = departureLocal.split('T')[0];
+  const arrDate = arrivalLocal.split('T')[0];
+  return arrDate > depDate;
 }
 
 export function stopCount(segments: unknown[]): number {

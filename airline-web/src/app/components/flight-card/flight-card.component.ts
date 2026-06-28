@@ -4,10 +4,11 @@ import { FlightOffer, FlightSegment } from '../../models';
 import { AirportLocalTimePipe } from '../../pipes/airport-local-time.pipe';
 import { currencyDisplayPrefix } from '../../utils/currency.utils';
 import {
+  arrivesNextDay,
   formatDurationMinutes,
+  legDisplayDuration,
   splitPrice,
   stopsLabel,
-  totalSegmentDuration,
 } from '../../utils/flight.utils';
 import { AirlineLogoComponent } from '../airline-logo/airline-logo.component';
 import { FlightLegDetailsComponent } from './flight-leg-details.component';
@@ -48,8 +49,12 @@ export class FlightCardComponent {
   }
 
   stopsLabel = stopsLabel;
-  totalDuration = totalSegmentDuration;
   formatDuration = formatDurationMinutes;
+  arrivesNextDay = arrivesNextDay;
+
+  legDuration(segments: FlightSegment[], legMinutes?: number): number {
+    return legDisplayDuration(segments, legMinutes);
+  }
 
   firstSegment(segments: FlightSegment[]): FlightSegment {
     return segments[0];
