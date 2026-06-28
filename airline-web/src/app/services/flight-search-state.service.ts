@@ -172,9 +172,10 @@ export class FlightSearchStateService {
   }
 
   private totalDuration(offer: FlightOffer): number {
-    return offer.outboundSegments.reduce(
-      (total, segment) => total + segment.durationMinutes,
-      0
-    );
+    const outbound = offer.outboundDurationMinutes
+      ?? offer.outboundSegments.reduce((total, segment) => total + segment.durationMinutes, 0);
+    const ret = offer.returnDurationMinutes
+      ?? offer.returnSegments.reduce((total, segment) => total + segment.durationMinutes, 0);
+    return outbound + ret;
   }
 }

@@ -24,7 +24,7 @@
               <p class="text-xs text-slate-500">{{ firstSegment(outbound).departureTime | airportTime:'date' }}</p>
             </div>
             <div class="flex min-w-[100px] flex-1 flex-col items-center px-2">
-              <span class="text-xs font-medium text-brand-gold">{{ formatDuration(totalDuration(outbound)) }}</span>
+              <span class="text-xs font-medium text-brand-gold">{{ formatDuration(legDuration(outbound, offer().outboundDurationMinutes)) }}</span>
               <div class="relative my-1 flex w-full max-w-[140px] items-center">
                 <span class="h-px flex-1 bg-brand-gold/40"></span>
                 <span class="mx-1 h-2 w-2 rounded-full border-2 border-brand-gold bg-white"></span>
@@ -36,6 +36,9 @@
               <p class="text-sm font-bold text-slate-900">
                 {{ lastSegment(outbound).destination }}
                 {{ lastSegment(outbound).arrivalTime | airportTime:'time' }}
+                @if (arrivesNextDay(firstSegment(outbound).departureTime, lastSegment(outbound).arrivalTime)) {
+                  <sup class="text-[10px] font-semibold text-brand-gold">+1</sup>
+                }
               </p>
               <p class="text-xs text-slate-500">{{ lastSegment(outbound).arrivalTime | airportTime:'date' }}</p>
             </div>
@@ -65,7 +68,7 @@
                 <p class="text-xs text-slate-500">{{ firstSegment(returnSegs).departureTime | airportTime:'date' }}</p>
               </div>
               <div class="flex min-w-[100px] flex-1 flex-col items-center px-2">
-                <span class="text-xs font-medium text-brand-gold">{{ formatDuration(totalDuration(returnSegs)) }}</span>
+                <span class="text-xs font-medium text-brand-gold">{{ formatDuration(legDuration(returnSegs, offer().returnDurationMinutes)) }}</span>
                 <div class="relative my-1 flex w-full max-w-[140px] items-center">
                   <span class="h-px flex-1 bg-brand-gold/40"></span>
                   <span class="mx-1 h-2 w-2 rounded-full border-2 border-brand-gold bg-white"></span>
@@ -77,6 +80,9 @@
                 <p class="text-sm font-bold text-slate-900">
                   {{ lastSegment(returnSegs).destination }}
                   {{ lastSegment(returnSegs).arrivalTime | airportTime:'time' }}
+                  @if (arrivesNextDay(firstSegment(returnSegs).departureTime, lastSegment(returnSegs).arrivalTime)) {
+                    <sup class="text-[10px] font-semibold text-brand-gold">+1</sup>
+                  }
                 </p>
                 <p class="text-xs text-slate-500">{{ lastSegment(returnSegs).arrivalTime | airportTime:'date' }}</p>
               </div>
@@ -121,11 +127,23 @@
   @if (detailsOpen()) {
     <div class="border-t border-slate-100 bg-slate-50/50 px-4 py-5 sm:px-5">
       @if (offer().returnSegments.length > 0) {
-        <app-flight-leg-details [segments]="offer().outboundSegments" title="Departure" />
+        <app-flight-leg-details
+          [segments]="offer().outboundSegments"
+          [legDurationMinutes]="offer().outboundDurationMinutes"
+          title="Departure"
+        />
         <div class="my-5 border-t border-slate-200"></div>
-        <app-flight-leg-details [segments]="offer().returnSegments" title="Return" />
+        <app-flight-leg-details
+          [segments]="offer().returnSegments"
+          [legDurationMinutes]="offer().returnDurationMinutes"
+          title="Return"
+        />
       } @else {
-        <app-flight-leg-details [segments]="offer().outboundSegments" title="Flight" />
+        <app-flight-leg-details
+          [segments]="offer().outboundSegments"
+          [legDurationMinutes]="offer().outboundDurationMinutes"
+          title="Flight"
+        />
       }
     </div>
   }

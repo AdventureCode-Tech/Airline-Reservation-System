@@ -39,6 +39,10 @@ export interface FlightOffer {
   cabinClass?: string;
   outboundSegments: FlightSegment[];
   returnSegments: FlightSegment[];
+  /** Total elapsed outbound minutes including layovers (Ignav leg duration). */
+  outboundDurationMinutes?: number;
+  /** Total elapsed return minutes including layovers (Ignav leg duration). */
+  returnDurationMinutes?: number;
 }
 
 export interface FlightResults {

@@ -158,7 +158,7 @@
                 </div>
               }
               <p class="text-xs text-slate-500">
-                Total travel time: {{ formatDuration(totalDuration(booking.outboundSegments)) }}
+                Total travel time: {{ formatDuration(legDuration(booking.outboundSegments)) }}
                 · {{ stopsLabel(booking.outboundSegments) }}
               </p>
             </div>
@@ -201,7 +201,7 @@
                   </div>
                 }
                 <p class="text-xs text-slate-500">
-                  Total travel time: {{ formatDuration(totalDuration(booking.returnSegments)) }}
+                  Total travel time: {{ formatDuration(legDuration(booking.returnSegments)) }}
                   · {{ stopsLabel(booking.returnSegments) }}
                 </p>
               </div>
