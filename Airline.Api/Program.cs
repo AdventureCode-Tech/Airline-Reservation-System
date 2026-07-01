@@ -6,6 +6,8 @@ using Airline.Api.Middleware;
 using Airline.Api.Services;
 using Airline.Api.Validators;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +53,8 @@ builder.Services.AddScoped<LoggingEmailService>();
 builder.Services.AddScoped<SmtpEmailService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IReferenceGeneratorService, ReferenceGeneratorService>();
+builder.Services.AddHealthChecks()
+    .AddCheck<SystemHealthCheck>("SystemHealth");
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -82,6 +86,30 @@ if (!app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseAuthorization();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var response = new
+        {
+            status = report.Status.ToString(),
+            duration = report.TotalDuration.TotalMilliseconds,
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                description = entry.Value.Description,
+                duration = entry.Value.Duration.TotalMilliseconds,
+                error = entry.Value.Exception?.Message
+            })
+        };
+
+        var json = System.Text.Json.JsonSerializer.Serialize(response, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+        await context.Response.WriteAsync(json);
+    }
+});
 
 app.MapControllers();
 

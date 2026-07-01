@@ -19,6 +19,12 @@ services:
       # - Email__SmtpProviders__0__Password=your-gmail-app-password
       # - Ignav__BaseUrl=https://ignav.com/api/
       # - Ignav__ApiKey=your-api-key
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   frontend-web:
     build:
@@ -27,4 +33,12 @@ services:
     ports:
       - "4200:80"
     depends_on:
-      - backend-api
+      backend-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --spider http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
