@@ -5,7 +5,7 @@ import { AirportLocalTimePipe } from '../../pipes/airport-local-time.pipe';
 import {
   formatDurationMinutes,
   layoverMinutes,
-  totalSegmentDuration,
+  legDisplayDuration,
 } from '../../utils/flight.utils';
 import { AirlineLogoComponent } from '../airline-logo/airline-logo.component';
 
@@ -15,7 +15,7 @@ import { AirlineLogoComponent } from '../airline-logo/airline-logo.component';
   template: `
     <div class="flex items-center justify-between">
       <h4 class="text-sm font-semibold text-slate-900">{{ title() }}</h4>
-      <span class="text-xs text-slate-500">Total: {{ formatDuration(totalDuration(segments())) }}</span>
+      <span class="text-xs text-slate-500">Total: {{ formatDuration(legDisplayDuration(segments(), legDurationMinutes())) }}</span>
     </div>
 
     <div class="mt-4 space-y-0">
@@ -75,8 +75,9 @@ import { AirlineLogoComponent } from '../airline-logo/airline-logo.component';
 export class FlightLegDetailsComponent {
   readonly segments = input.required<FlightSegment[]>();
   readonly title = input.required<string>();
+  readonly legDurationMinutes = input<number>();
 
   formatDuration = formatDurationMinutes;
+  legDisplayDuration = legDisplayDuration;
   layoverMinutes = layoverMinutes;
-  totalDuration = totalSegmentDuration;
 }

@@ -11,6 +11,7 @@ import {
   FlightSortOption,
 } from '../../services/flight-search-state.service';
 import { formatCurrency } from '../../utils/currency.utils';
+import { legDisplayDuration } from '../../utils/flight.utils';
 
 type SortTab = 'recommended' | 'cheapest' | 'shortest';
 
@@ -120,8 +121,14 @@ export class SearchResultsComponent {
   }
 
   private legDuration(offer: FlightOffer): number {
-    const outbound = offer.outboundSegments.reduce((s, seg) => s + seg.durationMinutes, 0);
-    const ret = offer.returnSegments.reduce((s, seg) => s + seg.durationMinutes, 0);
+    const outbound = legDisplayDuration(
+      offer.outboundSegments,
+      offer.outboundDurationMinutes
+    );
+    const ret = legDisplayDuration(
+      offer.returnSegments,
+      offer.returnDurationMinutes
+    );
     return outbound + ret;
   }
 }
